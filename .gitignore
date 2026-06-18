@@ -1,0 +1,10 @@
+# Database
+database/*.db
+database/*.sqlite
+
+# Windows reserved names
+nul
+
+# Python
+__pycache__/
+*.pyc
