@@ -9,6 +9,8 @@ SQL project analyzing **real Brazilian stock market data (B3)**. Built while tra
 
 > 10 stocks · 2,490+ price records · 20+ SQL queries · JOINs, CTEs & Window Functions
 
+📊 **[Ver todos os resultados executados →](output/RESULTS.md)**
+
 ---
 
 ## Why this project
@@ -69,7 +71,10 @@ pip install -r requirements.txt
 # 3. Create the database (downloads data from Yahoo Finance)
 python create_database.py
 
-# 4. Run queries with sqlite3 or DB Browser for SQLite
+# 4. Run all queries and generate the results report
+python run_queries.py
+
+# 5. Or explore manually with sqlite3 / DB Browser for SQLite
 sqlite3 database/b3_stocks.db
 ```
 
@@ -105,7 +110,10 @@ ORDER BY return_pct DESC;
 ```
 b3-financial-analysis/
 ├── create_database.py      # Downloads data & builds SQLite DB
+├── run_queries.py          # Runs all SQL files → output/RESULTS.md
 ├── requirements.txt        # Python dependencies
+├── output/
+│   └── RESULTS.md          # Full report with query outputs
 ├── database/               # Generated locally (gitignored)
 │   └── b3_stocks.db
 └── queries/
