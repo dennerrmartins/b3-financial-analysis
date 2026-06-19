@@ -7,9 +7,11 @@
 
 SQL project analyzing **real Brazilian stock market data (B3)**. Built while transitioning from BI/Automation into **Financial Data Analysis**.
 
-> 10 stocks · 2,490+ price records · 20+ SQL queries · JOINs, CTEs & Window Functions
+> 10 tickers · 2,490+ price records · 20+ SQL queries · JOINs, CTEs & Window Functions
 
 📊 **[Ver todos os resultados executados →](output/RESULTS.md)**
+
+> Conteúdo educacional. Não é recomendação de investimento. Amostra de 10 tickers — não representa a B3 como um todo.
 
 ---
 
@@ -25,7 +27,7 @@ Applying SQL to real financial data to build the skills needed for a **Data Anal
 |-------|-------------|
 | `stocks` | 10 companies from different sectors |
 | `daily_prices` | ~1 year of daily OHLCV data (via Yahoo Finance) |
-| `financial_indicators` | Revenue, net income, EBITDA, debt (2022–2023) |
+| `financial_indicators` | Revenue, net income, EBITDA, debt (2022–2023) — _dados ilustrativos para prática de SQL_ |
 
 ### Stocks covered
 

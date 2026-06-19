@@ -33,15 +33,23 @@ ORDER BY avg_volume DESC;
 
 -- 2.3: Most volatile stocks (standard deviation of daily returns)
 WITH daily_returns AS (
-    SELECT ticker, date, close,
-           LAG(close) OVER (PARTITION BY ticker ORDER BY date) AS prev_close
+    SELECT ticker,
+           (close - LAG(close) OVER (PARTITION BY ticker ORDER BY date))
+           / LAG(close) OVER (PARTITION BY ticker ORDER BY date) * 100 AS daily_return_pct
     FROM daily_prices
+),
+stats AS (
+    SELECT ticker,
+           AVG(daily_return_pct) AS avg_daily_return_pct,
+           (SUM(daily_return_pct * daily_return_pct)
+            - SUM(daily_return_pct) * SUM(daily_return_pct) / COUNT(*))
+           / (COUNT(*) - 1) AS return_variance
+    FROM daily_returns
+    WHERE daily_return_pct IS NOT NULL
+    GROUP BY ticker
 )
 SELECT ticker,
-       ROUND(AVG((close - prev_close) / prev_close * 100), 4) AS avg_daily_return_pct,
-       ROUND((SUM((close - prev_close) / prev_close * 100 * (close - prev_close) / prev_close * 100) -
-              SUM((close - prev_close) / prev_close * 100) * SUM((close - prev_close) / prev_close * 100) / COUNT(*)) / (COUNT(*) - 1), 4) AS variance
-FROM daily_returns
-WHERE prev_close IS NOT NULL
-GROUP BY ticker
-ORDER BY variance DESC;
+       ROUND(avg_daily_return_pct, 4) AS avg_daily_return_pct,
+       ROUND(SQRT(return_variance), 4) AS stddev_daily_return_pct
+FROM stats
+ORDER BY stddev_daily_return_pct DESC;

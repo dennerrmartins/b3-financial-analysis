@@ -1,11 +1,13 @@
 # B3 Financial Analysis — Resultados
-> Gerado em **19/06/2026 16:05** · 10 ações · SQLite · dados via Yahoo Finance
+> Gerado em **19/06/2026 16:44** · amostra de 10 tickers · SQLite · preços via Yahoo Finance
+
+> **Avisos:** conteúdo educacional, não é recomendação de investimento. A amostra não representa a B3 como um todo. Indicadores em `financial_indicators` (módulo 03) são dados ilustrativos inseridos manualmente para prática de SQL — não são balanços auditados.
 ---
 ## Sumário executivo
 **Top 3 retorno no período:**
-- **VALE3** → 74.43%
-- **PETR4** → 28.77%
-- **ABEV3** → 25.39%
+- **VALE3** → 74.43% (retorno do ticker no período)
+- **PETR4** → 28.77% (retorno do ticker no período)
+- **ABEV3** → 25.39% (retorno do ticker no período)
 
 ---
 ## 01 — Exploração de Dados
@@ -175,32 +177,40 @@ ORDER BY avg_volume DESC;
 ### 2.3: Most volatile stocks (standard deviation of daily returns)
 ```sql
 WITH daily_returns AS (
-    SELECT ticker, date, close,
-           LAG(close) OVER (PARTITION BY ticker ORDER BY date) AS prev_close
+    SELECT ticker,
+           (close - LAG(close) OVER (PARTITION BY ticker ORDER BY date))
+           / LAG(close) OVER (PARTITION BY ticker ORDER BY date) * 100 AS daily_return_pct
     FROM daily_prices
+),
+stats AS (
+    SELECT ticker,
+           AVG(daily_return_pct) AS avg_daily_return_pct,
+           (SUM(daily_return_pct * daily_return_pct)
+            - SUM(daily_return_pct) * SUM(daily_return_pct) / COUNT(*))
+           / (COUNT(*) - 1) AS return_variance
+    FROM daily_returns
+    WHERE daily_return_pct IS NOT NULL
+    GROUP BY ticker
 )
 SELECT ticker,
-       ROUND(AVG((close - prev_close) / prev_close * 100), 4) AS avg_daily_return_pct,
-       ROUND((SUM((close - prev_close) / prev_close * 100 * (close - prev_close) / prev_close * 100) -
-              SUM((close - prev_close) / prev_close * 100) * SUM((close - prev_close) / prev_close * 100) / COUNT(*)) / (COUNT(*) - 1), 4) AS variance
-FROM daily_returns
-WHERE prev_close IS NOT NULL
-GROUP BY ticker
-ORDER BY variance DESC;
+       ROUND(avg_daily_return_pct, 4) AS avg_daily_return_pct,
+       ROUND(SQRT(return_variance), 4) AS stddev_daily_return_pct
+FROM stats
+ORDER BY stddev_daily_return_pct DESC;
 ```
 
-| ticker | avg_daily_return_pct | variance |
+| ticker | avg_daily_return_pct | stddev_daily_return_pct |
 | --- | --- | --- |
-| RENT3 | 0.0184 | 5.8773 |
-| ENGI3 | 0.06 | 5.3241 |
-| WEGE3 | 0.075 | 3.4612 |
-| BBAS3 | -0.0101 | 3.2848 |
-| ABEV3 | 0.1043 | 2.6936 |
-| BBDC4 | 0.0664 | 2.5054 |
-| VALE3 | 0.237 | 2.4886 |
-| PETR4 | 0.1144 | 2.4747 |
-| ITUB4 | 0.0947 | 2.1502 |
-| KLBN4 | 0.0367 | 1.788 |
+| RENT3 | 0.0184 | 2.4243 |
+| ENGI3 | 0.06 | 2.3074 |
+| WEGE3 | 0.075 | 1.8604 |
+| BBAS3 | -0.0101 | 1.8124 |
+| ABEV3 | 0.1043 | 1.6412 |
+| BBDC4 | 0.0664 | 1.5828 |
+| VALE3 | 0.237 | 1.5775 |
+| PETR4 | 0.1144 | 1.5731 |
+| ITUB4 | 0.0947 | 1.4664 |
+| KLBN4 | 0.0367 | 1.3372 |
 
 ## 03 — Saúde Financeira
 ### 3.1: Revenue vs Net Income comparison (2023)

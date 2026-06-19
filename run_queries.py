@@ -69,7 +69,11 @@ def build_report() -> str:
     parts = [
         "# B3 Financial Analysis — Resultados\n",
         f"> Gerado em **{datetime.now().strftime('%d/%m/%Y %H:%M')}** · "
-        f"10 ações · SQLite · dados via Yahoo Finance\n",
+        f"amostra de 10 tickers · SQLite · preços via Yahoo Finance\n\n",
+        "> **Avisos:** conteúdo educacional, não é recomendação de investimento. "
+        "A amostra não representa a B3 como um todo. "
+        "Indicadores em `financial_indicators` (módulo 03) são dados ilustrativos "
+        "inseridos manualmente para prática de SQL — não são balanços auditados.\n",
         "---\n",
         "## Sumário executivo\n",
     ]
@@ -94,7 +98,7 @@ def build_report() -> str:
     headers, rows = run_query(conn, summary_sql)
     parts.append("**Top 3 retorno no período:**\n")
     for row in rows:
-        parts.append(f"- **{row[0]}** → {row[1]}%\n")
+        parts.append(f"- **{row[0]}** → {row[1]}% (retorno do ticker no período)\n")
     parts.append("\n---\n")
 
     for filename in sorted(QUERIES_DIR.glob("*.sql")):
