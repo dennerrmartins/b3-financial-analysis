@@ -1,4 +1,11 @@
--- 3.1: Revenue vs Net Income comparison (2023)
+-- =============================================================================
+-- MÓDULO 03 — Saúde Financeira
+-- ATENÇÃO: financial_indicators contém DADOS ILUSTRATIVOS inseridos manualmente
+-- Objetivo: praticar JOINs, self-joins e ratios financeiros em SQL
+-- NÃO usar para decisão de investimento
+-- =============================================================================
+
+-- 3.1: Qual a margem líquida por ticker em 2023? (dados ilustrativos)
 SELECT s.ticker, s.company_name, s.sector,
        f.revenue, f.net_income,
        ROUND(f.net_income / f.revenue * 100, 2) AS profit_margin_pct
@@ -7,7 +14,7 @@ JOIN financial_indicators f ON s.ticker = f.ticker
 WHERE f.year = 2023
 ORDER BY profit_margin_pct DESC;
 
--- 3.2: Debt ratio analysis
+-- 3.2: Qual o índice dívida/EBITDA por ticker? (dados ilustrativos)
 SELECT s.ticker, s.company_name,
        f.total_debt,
        f.ebitda,
@@ -17,7 +24,8 @@ JOIN financial_indicators f ON s.ticker = f.ticker
 WHERE f.year = 2023
 ORDER BY debt_to_ebitda;
 
--- 3.3: Year-over-year revenue growth
+-- 3.3: Qual o crescimento de receita YoY (2022 → 2023)? (dados ilustrativos)
+-- Self-join: cruza o mesmo ticker em anos diferentes
 SELECT a.ticker,
        a.revenue AS revenue_2022,
        b.revenue AS revenue_2023,
@@ -27,7 +35,7 @@ JOIN financial_indicators b ON a.ticker = b.ticker
 WHERE a.year = 2022 AND b.year = 2023
 ORDER BY revenue_growth_pct DESC;
 
--- 3.4: Banking sector overview
+-- 3.4: Como está o setor Banking na amostra? (dados ilustrativos)
 SELECT s.ticker, s.company_name,
        f.revenue, f.net_income, f.total_debt
 FROM stocks s

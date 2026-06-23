@@ -1,4 +1,12 @@
--- 2.1: Top 5 best performing stocks (year-to-date return)
+-- =============================================================================
+-- MÓDULO 02 — Performance e Volatilidade
+-- Objetivo: retorno, liquidez e risco relativo na amostra
+-- Fonte: daily_prices (dados reais de preço via Yahoo Finance)
+-- =============================================================================
+
+-- 2.1: Quais tickers tiveram maior retorno no período analisado?
+-- CTE yearly_prices: identifica primeira e última data por ticker
+-- CTE first_last: extrai preços de abertura e fechamento do período
 WITH yearly_prices AS (
     SELECT ticker,
            MIN(date) AS first_date,
@@ -22,7 +30,7 @@ FROM first_last
 ORDER BY return_pct DESC
 LIMIT 5;
 
--- 2.2: Stocks with highest average daily volume
+-- 2.2: Quais tickers têm maior volume médio (proxy de liquidez)?
 SELECT s.ticker, s.company_name,
        ROUND(AVG(p.volume)) AS avg_volume,
        ROUND(AVG(p.close), 2) AS avg_price
@@ -31,7 +39,9 @@ JOIN daily_prices p ON s.ticker = p.ticker
 GROUP BY s.ticker
 ORDER BY avg_volume DESC;
 
--- 2.3: Most volatile stocks (standard deviation of daily returns)
+-- 2.3: Quais tickers apresentam maior volatilidade (desvio padrão do retorno diário)?
+-- Window function LAG: obtém o preço do dia anterior para calcular retorno %
+-- CTE stats: calcula variância amostral e extrai stddev via SQRT
 WITH daily_returns AS (
     SELECT ticker,
            (close - LAG(close) OVER (PARTITION BY ticker ORDER BY date))

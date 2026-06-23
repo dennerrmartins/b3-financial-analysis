@@ -1,4 +1,11 @@
--- 5.1: Best and worst day for each stock
+-- =============================================================================
+-- MÓDULO 05 — Queries Desafio
+-- Objetivo: combinar CTEs, window functions e lógica condicional avançada
+-- Fonte: daily_prices (dados reais)
+-- =============================================================================
+
+-- 5.1: Qual foi o melhor e o pior dia de cada ticker?
+-- ROW_NUMBER() OVER: rankeia dias por variação intraday (open → close)
 WITH ranked_days AS (
     SELECT ticker, date,
            ROUND((close - open) / open * 100, 2) AS daily_change_pct,
@@ -14,7 +21,7 @@ SELECT ticker,
 FROM ranked_days
 GROUP BY ticker;
 
--- 5.2: Stocks that gained the most in the last week
+-- 5.2: Quais tickers mais valorizaram na última semana disponível na base?
 WITH week_ago AS (
     SELECT ticker, close
     FROM daily_prices
@@ -33,7 +40,8 @@ FROM today t
 JOIN week_ago w ON t.ticker = w.ticker
 ORDER BY week_change_pct DESC;
 
--- 5.3: Correlation between stocks (simplified — same direction days)
+-- 5.3: Quais pares de tickers movem-se na mesma direção com mais frequência?
+-- Proxy simplificado de correlação (não é Pearson) — mesma direção intraday
 SELECT a.ticker AS stock_a,
        b.ticker AS stock_b,
        ROUND(SUM(CASE WHEN (a.close - a.open) * (b.close - b.open) > 0 THEN 1 ELSE 0 END) * 1.0 / COUNT(*), 4) AS same_direction_pct
@@ -43,7 +51,8 @@ GROUP BY stock_a, stock_b
 HAVING COUNT(*) > 100
 ORDER BY same_direction_pct DESC;
 
--- 5.4: Stocks with consistent growth (higher close each month)
+-- 5.4: Quais tickers têm maior consistência de alta mês a mês?
+-- CTE growth_check: compara média mensal com o mês anterior via LAG
 WITH monthly_avg AS (
     SELECT ticker,
            STRFTIME('%Y-%m', date) AS month,

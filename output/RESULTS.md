@@ -1,17 +1,54 @@
-# B3 Financial Analysis — Resultados
-> Gerado em **19/06/2026 16:44** · amostra de 10 tickers · SQLite · preços via Yahoo Finance
+# B3 Financial Analysis — Relatório de Resultados
 
-> **Avisos:** conteúdo educacional, não é recomendação de investimento. A amostra não representa a B3 como um todo. Indicadores em `financial_indicators` (módulo 03) são dados ilustrativos inseridos manualmente para prática de SQL — não são balanços auditados.
+> Gerado em **23/06/2026 12:00** · amostra de 10 tickers · SQLite · preços via Yahoo Finance
+
+> **Avisos legais e técnicos**
+> - Conteúdo **educacional**. Não é recomendação de investimento.
+> - A amostra **não representa** a B3 como um todo.
+> - Indicadores do módulo 03 são **dados ilustrativos** para prática de SQL.
+
 ---
+
 ## Sumário executivo
-**Top 3 retorno no período:**
-- **VALE3** → 74.43% (retorno do ticker no período)
-- **PETR4** → 28.77% (retorno do ticker no período)
-- **ABEV3** → 25.39% (retorno do ticker no período)
+
+- **Período analisado:** 2025-06-20 a 2026-06-18
+- **Registros de preço:** 2,490 linhas · 10 tickers na amostra
+
+**Maior retorno no período (tickers):**
+- **VALE3** → 74.43%
+- **PETR4** → 28.77%
+- **ABEV3** → 25.39%
+
+**Maior volatilidade (stddev retorno diário):**
+- **RENT3** → 2.42%
+- **ENGI3** → 2.31%
+- **WEGE3** → 1.86%
+
+> Gráficos disponíveis em [`assets/charts/`](../assets/charts/) (gerados por `generate_charts.py`).
 
 ---
+
 ## 01 — Exploração de Dados
-### 1.1: View all stocks in the database
+
+Validação da base, distribuição da amostra e leitura inicial de preços e volume.
+
+### Query
+
+```sql
+-- =============================================================================
+-- MÓDULO 01 — Exploração de Dados
+```
+
+_Sem resultados._
+### Fonte: daily_prices (Yahoo Finance) + stocks
+
+```sql
+-- =============================================================================
+```
+
+_Sem resultados._
+### 1.1: Quais tickers compõem a amostra?
+
 ```sql
 SELECT * FROM stocks;
 ```
@@ -28,8 +65,8 @@ SELECT * FROM stocks;
 | ENGI3 | Energisa | Energy |
 | KLBN4 | Klabin | Paper & Packaging |
 | RENT3 | Localiza | Car Rental |
+### 1.2: Como os tickers se distribuem por setor na amostra?
 
-### 1.2: Group stocks by sector
 ```sql
 SELECT sector, COUNT(*) AS total_stocks
 FROM stocks
@@ -47,8 +84,8 @@ ORDER BY total_stocks DESC;
 | Energy | 1 |
 | Car Rental | 1 |
 | Beverages | 1 |
+### 1.3: Qual o último preço de fechamento de cada ticker?
 
-### 1.3: Latest price for each stock
 ```sql
 SELECT ticker, date, close
 FROM daily_prices
@@ -57,18 +94,18 @@ WHERE date = (SELECT MAX(date) FROM daily_prices);
 
 | ticker | date | close |
 | --- | --- | --- |
-| PETR4 | 2026-06-18 00:00:00 | 38.849998474121094 |
-| VALE3 | 2026-06-18 00:00:00 | 79.94000244140625 |
-| ITUB4 | 2026-06-18 00:00:00 | 40.12812042236328 |
-| BBDC4 | 2026-06-18 00:00:00 | 17.469999313354492 |
-| ABEV3 | 2026-06-18 00:00:00 | 16.219999313354492 |
-| WEGE3 | 2026-06-18 00:00:00 | 45.810001373291016 |
-| BBAS3 | 2026-06-18 00:00:00 | 19.530000686645508 |
-| ENGI3 | 2026-06-18 00:00:00 | 11.699999809265137 |
-| KLBN4 | 2026-06-18 00:00:00 | 3.440000057220459 |
-| RENT3 | 2026-06-18 00:00:00 | 40.09000015258789 |
+| PETR4 | 2026-06-18 | 38.85 |
+| VALE3 | 2026-06-18 | 79.94 |
+| ITUB4 | 2026-06-18 | 40.13 |
+| BBDC4 | 2026-06-18 | 17.47 |
+| ABEV3 | 2026-06-18 | 16.22 |
+| WEGE3 | 2026-06-18 | 45.81 |
+| BBAS3 | 2026-06-18 | 19.53 |
+| ENGI3 | 2026-06-18 | 11.70 |
+| KLBN4 | 2026-06-18 | 3.44 |
+| RENT3 | 2026-06-18 | 40.09 |
+### 1.4: Qual o preço médio de fechamento nos últimos 30 dias?
 
-### 1.4: Average closing price per stock (last 30 days)
 ```sql
 SELECT ticker, ROUND(AVG(close), 2) AS avg_price_30d
 FROM daily_prices
@@ -79,18 +116,18 @@ ORDER BY avg_price_30d DESC;
 
 | ticker | avg_price_30d |
 | --- | --- |
-| VALE3 | 81.26 |
-| WEGE3 | 43.09 |
-| RENT3 | 41.72 |
-| PETR4 | 41.42 |
-| ITUB4 | 39.48 |
-| BBAS3 | 19.92 |
-| BBDC4 | 17.64 |
-| ABEV3 | 16.35 |
-| ENGI3 | 11.82 |
-| KLBN4 | 3.37 |
+| VALE3 | 81.04 |
+| WEGE3 | 43.18 |
+| RENT3 | 41.35 |
+| PETR4 | 41.00 |
+| ITUB4 | 39.50 |
+| BBAS3 | 19.80 |
+| BBDC4 | 17.62 |
+| ABEV3 | 16.37 |
+| ENGI3 | 11.78 |
+| KLBN4 | 3.38 |
+### 1.5: Qual foi o dia de maior volume negociado por ticker?
 
-### 1.5: Highest volume day per stock
 ```sql
 SELECT ticker, date, volume
 FROM daily_prices
@@ -104,19 +141,37 @@ ORDER BY volume DESC;
 
 | ticker | date | volume |
 | --- | --- | --- |
-| BBAS3 | 2025-08-15 00:00:00 | 131820200 |
-| ABEV3 | 2025-07-31 00:00:00 | 116074600 |
-| PETR4 | 2025-08-08 00:00:00 | 107235300 |
-| BBDC4 | 2026-02-06 00:00:00 | 94063600 |
-| VALE3 | 2026-01-21 00:00:00 | 83134600 |
-| ITUB4 | 2026-05-29 00:00:00 | 80334400 |
-| RENT3 | 2025-06-26 00:00:00 | 33754000 |
-| WEGE3 | 2025-07-23 00:00:00 | 31116000 |
-| KLBN4 | 2026-05-06 00:00:00 | 16076300 |
-| ENGI3 | 2025-12-19 00:00:00 | 41400 |
-
+| BBAS3 | 2025-08-15 | 131820200 |
+| ABEV3 | 2025-07-31 | 116074600 |
+| PETR4 | 2025-08-08 | 107235300 |
+| BBDC4 | 2026-02-06 | 94063600 |
+| VALE3 | 2026-01-21 | 83134600 |
+| ITUB4 | 2026-05-29 | 80334400 |
+| RENT3 | 2025-06-26 | 33754000 |
+| WEGE3 | 2025-07-23 | 31116000 |
+| KLBN4 | 2026-05-06 | 16076300 |
+| ENGI3 | 2025-12-19 | 41400 |
 ## 02 — Performance e Volatilidade
-### 2.1: Top 5 best performing stocks (year-to-date return)
+
+Análise de retorno, liquidez e volatilidade com dados reais de preço (Yahoo Finance).
+
+### Query
+
+```sql
+-- =============================================================================
+-- MÓDULO 02 — Performance e Volatilidade
+```
+
+_Sem resultados._
+### Fonte: daily_prices (dados reais de preço via Yahoo Finance)
+
+```sql
+-- =============================================================================
+```
+
+_Sem resultados._
+### CTE first_last: extrai preços de abertura e fechamento do período
+
 ```sql
 WITH yearly_prices AS (
     SELECT ticker,
@@ -149,8 +204,8 @@ LIMIT 5;
 | ABEV3 | 12.94 | 16.22 | 25.39 |
 | ITUB4 | 32.58 | 40.13 | 23.16 |
 | WEGE3 | 39.71 | 45.81 | 15.37 |
+### 2.2: Quais tickers têm maior volume médio (proxy de liquidez)?
 
-### 2.2: Stocks with highest average daily volume
 ```sql
 SELECT s.ticker, s.company_name,
        ROUND(AVG(p.volume)) AS avg_volume,
@@ -163,18 +218,18 @@ ORDER BY avg_volume DESC;
 
 | ticker | company_name | avg_volume | avg_price |
 | --- | --- | --- | --- |
-| PETR4 | Petrobras | 40602575.0 | 34.52 |
-| BBDC4 | Bradesco | 31294019.0 | 17.66 |
-| BBAS3 | Banco do Brasil | 29898929.0 | 21.68 |
-| ABEV3 | Ambev | 29158410.0 | 13.76 |
-| ITUB4 | Itaú Unibanco | 25487895.0 | 38.03 |
-| VALE3 | Vale | 23010805.0 | 68.43 |
-| RENT3 | Localiza | 8787068.0 | 41.7 |
-| WEGE3 | WEG | 8725155.0 | 42.97 |
-| KLBN4 | Klabin | 3710491.0 | 3.54 |
-| ENGI3 | Energisa | 6765.0 | 12.17 |
+| PETR4 | Petrobras | 40602575.00 | 34.52 |
+| BBDC4 | Bradesco | 31294019.00 | 17.66 |
+| BBAS3 | Banco do Brasil | 29898929.00 | 21.68 |
+| ABEV3 | Ambev | 29158410.00 | 13.76 |
+| ITUB4 | Itaú Unibanco | 25487895.00 | 38.03 |
+| VALE3 | Vale | 23010805.00 | 68.43 |
+| RENT3 | Localiza | 8787068.00 | 41.70 |
+| WEGE3 | WEG | 8725155.00 | 42.97 |
+| KLBN4 | Klabin | 3710491.00 | 3.54 |
+| ENGI3 | Energisa | 6765.00 | 12.17 |
+### CTE stats: calcula variância amostral e extrai stddev via SQRT
 
-### 2.3: Most volatile stocks (standard deviation of daily returns)
 ```sql
 WITH daily_returns AS (
     SELECT ticker,
@@ -201,19 +256,38 @@ ORDER BY stddev_daily_return_pct DESC;
 
 | ticker | avg_daily_return_pct | stddev_daily_return_pct |
 | --- | --- | --- |
-| RENT3 | 0.0184 | 2.4243 |
-| ENGI3 | 0.06 | 2.3074 |
-| WEGE3 | 0.075 | 1.8604 |
-| BBAS3 | -0.0101 | 1.8124 |
-| ABEV3 | 0.1043 | 1.6412 |
-| BBDC4 | 0.0664 | 1.5828 |
-| VALE3 | 0.237 | 1.5775 |
-| PETR4 | 0.1144 | 1.5731 |
-| ITUB4 | 0.0947 | 1.4664 |
-| KLBN4 | 0.0367 | 1.3372 |
+| RENT3 | 0.02 | 2.42 |
+| ENGI3 | 0.06 | 2.31 |
+| WEGE3 | 0.07 | 1.86 |
+| BBAS3 | -0.01 | 1.81 |
+| ABEV3 | 0.10 | 1.64 |
+| BBDC4 | 0.07 | 1.58 |
+| VALE3 | 0.24 | 1.58 |
+| PETR4 | 0.11 | 1.57 |
+| ITUB4 | 0.09 | 1.47 |
+| KLBN4 | 0.04 | 1.34 |
+## 03 — Saúde Financeira (dados ilustrativos)
 
-## 03 — Saúde Financeira
-### 3.1: Revenue vs Net Income comparison (2023)
+**Atenção:** indicadores desta seção vêm de `financial_indicators`, dados **ilustrativos** inseridos manualmente para prática de JOINs e ratios — não substituem balanços auditados.
+
+### Query
+
+```sql
+-- =============================================================================
+-- MÓDULO 03 — Saúde Financeira
+```
+
+_Sem resultados._
+### Objetivo: praticar JOINs, self-joins e ratios financeiros em SQL
+
+```sql
+-- NÃO usar para decisão de investimento
+-- =============================================================================
+```
+
+_Sem resultados._
+### 3.1: Qual a margem líquida por ticker em 2023? (dados ilustrativos)
+
 ```sql
 SELECT s.ticker, s.company_name, s.sector,
        f.revenue, f.net_income,
@@ -226,18 +300,18 @@ ORDER BY profit_margin_pct DESC;
 
 | ticker | company_name | sector | revenue | net_income | profit_margin_pct |
 | --- | --- | --- | --- | --- | --- |
-| PETR4 | Petrobras | Oil & Gas | 511.7 | 124.6 | 24.35 |
-| VALE3 | Vale | Mining | 169.5 | 38.2 | 22.54 |
-| BBAS3 | Banco do Brasil | Banking | 142.8 | 30.5 | 21.36 |
-| ITUB4 | Itaú Unibanco | Banking | 189.7 | 34.2 | 18.03 |
-| ABEV3 | Ambev | Beverages | 78.4 | 14.1 | 17.98 |
-| BBDC4 | Bradesco | Banking | 157.2 | 24.5 | 15.59 |
-| RENT3 | Localiza | Car Rental | 38.4 | 4.9 | 12.76 |
-| KLBN4 | Klabin | Paper & Packaging | 24.8 | 3.1 | 12.5 |
-| WEGE3 | WEG | Industrial | 48.5 | 5.8 | 11.96 |
-| ENGI3 | Energisa | Energy | 28.4 | 3.2 | 11.27 |
+| PETR4 | Petrobras | Oil & Gas | 511.70 | 124.60 | 24.35 |
+| VALE3 | Vale | Mining | 169.50 | 38.20 | 22.54 |
+| BBAS3 | Banco do Brasil | Banking | 142.80 | 30.50 | 21.36 |
+| ITUB4 | Itaú Unibanco | Banking | 189.70 | 34.20 | 18.03 |
+| ABEV3 | Ambev | Beverages | 78.40 | 14.10 | 17.98 |
+| BBDC4 | Bradesco | Banking | 157.20 | 24.50 | 15.59 |
+| RENT3 | Localiza | Car Rental | 38.40 | 4.90 | 12.76 |
+| KLBN4 | Klabin | Paper & Packaging | 24.80 | 3.10 | 12.50 |
+| WEGE3 | WEG | Industrial | 48.50 | 5.80 | 11.96 |
+| ENGI3 | Energisa | Energy | 28.40 | 3.20 | 11.27 |
+### 3.2: Qual o índice dívida/EBITDA por ticker? (dados ilustrativos)
 
-### 3.2: Debt ratio analysis
 ```sql
 SELECT s.ticker, s.company_name,
        f.total_debt,
@@ -251,18 +325,18 @@ ORDER BY debt_to_ebitda;
 
 | ticker | company_name | total_debt | ebitda | debt_to_ebitda |
 | --- | --- | --- | --- | --- |
-| VALE3 | Vale | 34.7 | 62.1 | 0.56 |
-| WEGE3 | WEG | 6.4 | 8.2 | 0.78 |
-| PETR4 | Petrobras | 187.3 | 184.2 | 1.02 |
-| ABEV3 | Ambev | 19.2 | 18.5 | 1.04 |
-| RENT3 | Localiza | 14.8 | 7.2 | 2.06 |
-| BBAS3 | Banco do Brasil | 98.4 | 45.2 | 2.18 |
-| KLBN4 | Klabin | 12.7 | 5.4 | 2.35 |
-| ENGI3 | Energisa | 18.5 | 7.1 | 2.61 |
-| ITUB4 | Itaú Unibanco | 145.3 | 52.1 | 2.79 |
-| BBDC4 | Bradesco | 178.2 | 38.4 | 4.64 |
+| VALE3 | Vale | 34.70 | 62.10 | 0.56 |
+| WEGE3 | WEG | 6.40 | 8.20 | 0.78 |
+| PETR4 | Petrobras | 187.30 | 184.20 | 1.02 |
+| ABEV3 | Ambev | 19.20 | 18.50 | 1.04 |
+| RENT3 | Localiza | 14.80 | 7.20 | 2.06 |
+| BBAS3 | Banco do Brasil | 98.40 | 45.20 | 2.18 |
+| KLBN4 | Klabin | 12.70 | 5.40 | 2.35 |
+| ENGI3 | Energisa | 18.50 | 7.10 | 2.61 |
+| ITUB4 | Itaú Unibanco | 145.30 | 52.10 | 2.79 |
+| BBDC4 | Bradesco | 178.20 | 38.40 | 4.64 |
+### Self-join: cruza o mesmo ticker em anos diferentes
 
-### 3.3: Year-over-year revenue growth
 ```sql
 SELECT a.ticker,
        a.revenue AS revenue_2022,
@@ -276,18 +350,18 @@ ORDER BY revenue_growth_pct DESC;
 
 | ticker | revenue_2022 | revenue_2023 | revenue_growth_pct |
 | --- | --- | --- | --- |
-| KLBN4 | 22.5 | 24.8 | 10.22 |
-| WEGE3 | 44.2 | 48.5 | 9.73 |
-| RENT3 | 35.1 | 38.4 | 9.4 |
-| ENGI3 | 26.1 | 28.4 | 8.81 |
-| BBDC4 | 149.8 | 157.2 | 4.94 |
-| PETR4 | 488.2 | 511.7 | 4.81 |
-| ITUB4 | 182.4 | 189.7 | 4.0 |
-| ABEV3 | 75.6 | 78.4 | 3.7 |
-| BBAS3 | 138.1 | 142.8 | 3.4 |
-| VALE3 | 175.4 | 169.5 | -3.36 |
+| KLBN4 | 22.50 | 24.80 | 10.22 |
+| WEGE3 | 44.20 | 48.50 | 9.73 |
+| RENT3 | 35.10 | 38.40 | 9.40 |
+| ENGI3 | 26.10 | 28.40 | 8.81 |
+| BBDC4 | 149.80 | 157.20 | 4.94 |
+| PETR4 | 488.20 | 511.70 | 4.81 |
+| ITUB4 | 182.40 | 189.70 | 4.00 |
+| ABEV3 | 75.60 | 78.40 | 3.70 |
+| BBAS3 | 138.10 | 142.80 | 3.40 |
+| VALE3 | 175.40 | 169.50 | -3.36 |
+### 3.4: Como está o setor Banking na amostra? (dados ilustrativos)
 
-### 3.4: Banking sector overview
 ```sql
 SELECT s.ticker, s.company_name,
        f.revenue, f.net_income, f.total_debt
@@ -298,12 +372,30 @@ WHERE s.sector = 'Banking' AND f.year = 2023;
 
 | ticker | company_name | revenue | net_income | total_debt |
 | --- | --- | --- | --- | --- |
-| ITUB4 | Itaú Unibanco | 189.7 | 34.2 | 145.3 |
-| BBDC4 | Bradesco | 157.2 | 24.5 | 178.2 |
-| BBAS3 | Banco do Brasil | 142.8 | 30.5 | 98.4 |
-
+| ITUB4 | Itaú Unibanco | 189.70 | 34.20 | 145.30 |
+| BBDC4 | Bradesco | 157.20 | 24.50 | 178.20 |
+| BBAS3 | Banco do Brasil | 142.80 | 30.50 | 98.40 |
 ## 04 — Window Functions
-### 4.1: 20-day moving average for Petrobras
+
+Séries temporais com médias móveis, retorno diário, ranking por setor e retorno acumulado.
+
+### Query
+
+```sql
+-- =============================================================================
+-- MÓDULO 04 — Window Functions
+```
+
+_Sem resultados._
+### Fonte: daily_prices (dados reais)
+
+```sql
+-- =============================================================================
+```
+
+_Sem resultados._
+### AVG() OVER com frame ROWS: janela deslizante de 20 pregões
+
 ```sql
 SELECT date, close,
        ROUND(AVG(close) OVER (ORDER BY date ROWS BETWEEN 19 PRECEDING AND CURRENT ROW), 2) AS ma_20
@@ -312,77 +404,78 @@ WHERE ticker = 'PETR4'
 ORDER BY date;
 ```
 
-_249 linhas — exibindo top 25_
+_249 linhas — exibindo as primeiras 25_
 
 | date | close | ma_20 |
 | --- | --- | --- |
-| 2025-06-20 00:00:00 | 30.16919708251953 | 30.17 |
-| 2025-06-23 00:00:00 | 29.415428161621094 | 29.79 |
-| 2025-06-24 00:00:00 | 28.836313247680664 | 29.47 |
-| 2025-06-25 00:00:00 | 28.689231872558594 | 29.28 |
-| 2025-06-26 00:00:00 | 28.91904067993164 | 29.21 |
-| 2025-06-27 00:00:00 | 28.689231872558594 | 29.12 |
-| 2025-06-30 00:00:00 | 28.845502853393555 | 29.08 |
-| 2025-07-01 00:00:00 | 28.946617126464844 | 29.06 |
-| 2025-07-02 00:00:00 | 29.461387634277344 | 29.11 |
-| 2025-07-03 00:00:00 | 29.562503814697266 | 29.15 |
-| 2025-07-04 00:00:00 | 29.525733947753906 | 29.19 |
-| 2025-07-07 00:00:00 | 29.470582962036133 | 29.21 |
-| 2025-07-08 00:00:00 | 29.893428802490234 | 29.26 |
-| 2025-07-09 00:00:00 | 29.709579467773438 | 29.3 |
-| 2025-07-10 00:00:00 | 29.636045455932617 | 29.32 |
-| 2025-07-11 00:00:00 | 29.99454689025879 | 29.36 |
-| 2025-07-14 00:00:00 | 29.599273681640625 | 29.37 |
-| 2025-07-15 00:00:00 | 29.36946678161621 | 29.37 |
-| 2025-07-16 00:00:00 | 29.222389221191406 | 29.37 |
-| 2025-07-17 00:00:00 | 28.928232192993164 | 29.34 |
-| 2025-07-18 00:00:00 | 28.487003326416016 | 29.26 |
-| 2025-07-21 00:00:00 | 28.54215431213379 | 29.22 |
-| 2025-07-22 00:00:00 | 28.81792640686035 | 29.22 |
-| 2025-07-23 00:00:00 | 29.406234741210938 | 29.25 |
-| 2025-07-24 00:00:00 | 29.360273361206055 | 29.27 |
+| 2025-06-20 | 30.17 | 30.17 |
+| 2025-06-23 | 29.42 | 29.79 |
+| 2025-06-24 | 28.84 | 29.47 |
+| 2025-06-25 | 28.69 | 29.28 |
+| 2025-06-26 | 28.92 | 29.21 |
+| 2025-06-27 | 28.69 | 29.12 |
+| 2025-06-30 | 28.85 | 29.08 |
+| 2025-07-01 | 28.95 | 29.06 |
+| 2025-07-02 | 29.46 | 29.11 |
+| 2025-07-03 | 29.56 | 29.15 |
+| 2025-07-04 | 29.53 | 29.19 |
+| 2025-07-07 | 29.47 | 29.21 |
+| 2025-07-08 | 29.89 | 29.26 |
+| 2025-07-09 | 29.71 | 29.30 |
+| 2025-07-10 | 29.64 | 29.32 |
+| 2025-07-11 | 29.99 | 29.36 |
+| 2025-07-14 | 29.60 | 29.37 |
+| 2025-07-15 | 29.37 | 29.37 |
+| 2025-07-16 | 29.22 | 29.37 |
+| 2025-07-17 | 28.93 | 29.34 |
+| 2025-07-18 | 28.49 | 29.26 |
+| 2025-07-21 | 28.54 | 29.22 |
+| 2025-07-22 | 28.82 | 29.22 |
+| 2025-07-23 | 29.41 | 29.25 |
+| 2025-07-24 | 29.36 | 29.27 |
+### LAG() OVER PARTITION BY ticker: compara cada dia com o pregão anterior
 
-### 4.2: Daily return with LAG
 ```sql
 SELECT ticker, date, close,
        LAG(close) OVER (PARTITION BY ticker ORDER BY date) AS prev_close,
-       ROUND((close - LAG(close) OVER (PARTITION BY ticker ORDER BY date)) / LAG(close) OVER (PARTITION BY ticker ORDER BY date) * 100, 2) AS daily_return_pct
+       ROUND((close - LAG(close) OVER (PARTITION BY ticker ORDER BY date))
+             / LAG(close) OVER (PARTITION BY ticker ORDER BY date) * 100, 2) AS daily_return_pct
 FROM daily_prices
 WHERE ticker IN ('PETR4', 'VALE3', 'ITUB4')
 ORDER BY ticker, date;
 ```
 
-_747 linhas — exibindo top 25_
+_747 linhas — exibindo as primeiras 25_
 
 | ticker | date | close | prev_close | daily_return_pct |
 | --- | --- | --- | --- | --- |
-| ITUB4 | 2025-06-20 00:00:00 | 32.5827751159668 |  |  |
-| ITUB4 | 2025-06-23 00:00:00 | 32.51164245605469 | 32.5827751159668 | -0.22 |
-| ITUB4 | 2025-06-24 00:00:00 | 33.12522888183594 | 32.51164245605469 | 1.89 |
-| ITUB4 | 2025-06-25 00:00:00 | 32.5294303894043 | 33.12522888183594 | -1.8 |
-| ITUB4 | 2025-06-26 00:00:00 | 32.2893180847168 | 32.5294303894043 | -0.74 |
-| ITUB4 | 2025-06-27 00:00:00 | 32.25375747680664 | 32.2893180847168 | -0.11 |
-| ITUB4 | 2025-06-30 00:00:00 | 32.85845184326172 | 32.25375747680664 | 1.87 |
-| ITUB4 | 2025-07-01 00:00:00 | 33.00761413574219 | 32.85845184326172 | 0.45 |
-| ITUB4 | 2025-07-02 00:00:00 | 32.7407112121582 | 33.00761413574219 | -0.81 |
-| ITUB4 | 2025-07-03 00:00:00 | 33.550323486328125 | 32.7407112121582 | 2.47 |
-| ITUB4 | 2025-07-04 00:00:00 | 33.568115234375 | 33.550323486328125 | 0.05 |
-| ITUB4 | 2025-07-07 00:00:00 | 33.12327575683594 | 33.568115234375 | -1.33 |
-| ITUB4 | 2025-07-08 00:00:00 | 33.043190002441406 | 33.12327575683594 | -0.24 |
-| ITUB4 | 2025-07-09 00:00:00 | 32.35813522338867 | 33.043190002441406 | -2.07 |
-| ITUB4 | 2025-07-10 00:00:00 | 31.361677169799805 | 32.35813522338867 | -3.08 |
-| ITUB4 | 2025-07-11 00:00:00 | 31.10366439819336 | 31.361677169799805 | -0.82 |
-| ITUB4 | 2025-07-14 00:00:00 | 31.05028533935547 | 31.10366439819336 | -0.17 |
-| ITUB4 | 2025-07-15 00:00:00 | 31.157052993774414 | 31.05028533935547 | 0.34 |
-| ITUB4 | 2025-07-16 00:00:00 | 31.308292388916016 | 31.157052993774414 | 0.49 |
-| ITUB4 | 2025-07-17 00:00:00 | 31.77983283996582 | 31.308292388916016 | 1.51 |
-| ITUB4 | 2025-07-18 00:00:00 | 31.201539993286133 | 31.77983283996582 | -1.82 |
-| ITUB4 | 2025-07-21 00:00:00 | 31.566307067871094 | 31.201539993286133 | 1.17 |
-| ITUB4 | 2025-07-22 00:00:00 | 31.13925552368164 | 31.566307067871094 | -1.35 |
-| ITUB4 | 2025-07-23 00:00:00 | 31.486236572265625 | 31.13925552368164 | 1.11 |
-| ITUB4 | 2025-07-24 00:00:00 | 31.192642211914062 | 31.486236572265625 | -0.93 |
+| ITUB4 | 2025-06-20 | 32.58 |  |  |
+| ITUB4 | 2025-06-23 | 32.51 | 32.58 | -0.22 |
+| ITUB4 | 2025-06-24 | 33.13 | 32.51 | 1.89 |
+| ITUB4 | 2025-06-25 | 32.53 | 33.13 | -1.80 |
+| ITUB4 | 2025-06-26 | 32.29 | 32.53 | -0.74 |
+| ITUB4 | 2025-06-27 | 32.25 | 32.29 | -0.11 |
+| ITUB4 | 2025-06-30 | 32.86 | 32.25 | 1.87 |
+| ITUB4 | 2025-07-01 | 33.01 | 32.86 | 0.45 |
+| ITUB4 | 2025-07-02 | 32.74 | 33.01 | -0.81 |
+| ITUB4 | 2025-07-03 | 33.55 | 32.74 | 2.47 |
+| ITUB4 | 2025-07-04 | 33.57 | 33.55 | 0.05 |
+| ITUB4 | 2025-07-07 | 33.12 | 33.57 | -1.33 |
+| ITUB4 | 2025-07-08 | 33.04 | 33.12 | -0.24 |
+| ITUB4 | 2025-07-09 | 32.36 | 33.04 | -2.07 |
+| ITUB4 | 2025-07-10 | 31.36 | 32.36 | -3.08 |
+| ITUB4 | 2025-07-11 | 31.10 | 31.36 | -0.82 |
+| ITUB4 | 2025-07-14 | 31.05 | 31.10 | -0.17 |
+| ITUB4 | 2025-07-15 | 31.16 | 31.05 | 0.34 |
+| ITUB4 | 2025-07-16 | 31.31 | 31.16 | 0.49 |
+| ITUB4 | 2025-07-17 | 31.78 | 31.31 | 1.51 |
+| ITUB4 | 2025-07-18 | 31.20 | 31.78 | -1.82 |
+| ITUB4 | 2025-07-21 | 31.57 | 31.20 | 1.17 |
+| ITUB4 | 2025-07-22 | 31.14 | 31.57 | -1.35 |
+| ITUB4 | 2025-07-23 | 31.49 | 31.14 | 1.11 |
+| ITUB4 | 2025-07-24 | 31.19 | 31.49 | -0.93 |
+### RANK() OVER PARTITION BY sector: ranking relativo por setor na amostra
 
-### 4.3: Rank stocks by average price per sector
 ```sql
 SELECT s.sector, s.ticker,
        ROUND(AVG(p.close), 2) AS avg_price,
@@ -399,14 +492,14 @@ ORDER BY s.sector, rank_in_sector;
 | Banking | BBAS3 | 21.68 | 2 |
 | Banking | BBDC4 | 17.66 | 3 |
 | Beverages | ABEV3 | 13.76 | 1 |
-| Car Rental | RENT3 | 41.7 | 1 |
+| Car Rental | RENT3 | 41.70 | 1 |
 | Energy | ENGI3 | 12.17 | 1 |
 | Industrial | WEGE3 | 42.97 | 1 |
 | Mining | VALE3 | 68.43 | 1 |
 | Oil & Gas | PETR4 | 34.52 | 1 |
 | Paper & Packaging | KLBN4 | 3.54 | 1 |
+### FIRST_VALUE() OVER: define preço base para cálculo de retorno acumulado
 
-### 4.4: Cumulative return since first date
 ```sql
 WITH base_prices AS (
     SELECT ticker, date, close,
@@ -420,38 +513,56 @@ WHERE ticker = 'PETR4'
 ORDER BY date;
 ```
 
-_249 linhas — exibindo top 25_
+_249 linhas — exibindo as primeiras 25_
 
 | ticker | date | cumulative_return_pct |
 | --- | --- | --- |
-| PETR4 | 2025-06-20 00:00:00 | 0.0 |
-| PETR4 | 2025-06-23 00:00:00 | -2.5 |
-| PETR4 | 2025-06-24 00:00:00 | -4.42 |
-| PETR4 | 2025-06-25 00:00:00 | -4.91 |
-| PETR4 | 2025-06-26 00:00:00 | -4.14 |
-| PETR4 | 2025-06-27 00:00:00 | -4.91 |
-| PETR4 | 2025-06-30 00:00:00 | -4.39 |
-| PETR4 | 2025-07-01 00:00:00 | -4.05 |
-| PETR4 | 2025-07-02 00:00:00 | -2.35 |
-| PETR4 | 2025-07-03 00:00:00 | -2.01 |
-| PETR4 | 2025-07-04 00:00:00 | -2.13 |
-| PETR4 | 2025-07-07 00:00:00 | -2.32 |
-| PETR4 | 2025-07-08 00:00:00 | -0.91 |
-| PETR4 | 2025-07-09 00:00:00 | -1.52 |
-| PETR4 | 2025-07-10 00:00:00 | -1.77 |
-| PETR4 | 2025-07-11 00:00:00 | -0.58 |
-| PETR4 | 2025-07-14 00:00:00 | -1.89 |
-| PETR4 | 2025-07-15 00:00:00 | -2.65 |
-| PETR4 | 2025-07-16 00:00:00 | -3.14 |
-| PETR4 | 2025-07-17 00:00:00 | -4.11 |
-| PETR4 | 2025-07-18 00:00:00 | -5.58 |
-| PETR4 | 2025-07-21 00:00:00 | -5.39 |
-| PETR4 | 2025-07-22 00:00:00 | -4.48 |
-| PETR4 | 2025-07-23 00:00:00 | -2.53 |
-| PETR4 | 2025-07-24 00:00:00 | -2.68 |
-
+| PETR4 | 2025-06-20 | 0.0000 |
+| PETR4 | 2025-06-23 | -2.50 |
+| PETR4 | 2025-06-24 | -4.42 |
+| PETR4 | 2025-06-25 | -4.91 |
+| PETR4 | 2025-06-26 | -4.14 |
+| PETR4 | 2025-06-27 | -4.91 |
+| PETR4 | 2025-06-30 | -4.39 |
+| PETR4 | 2025-07-01 | -4.05 |
+| PETR4 | 2025-07-02 | -2.35 |
+| PETR4 | 2025-07-03 | -2.01 |
+| PETR4 | 2025-07-04 | -2.13 |
+| PETR4 | 2025-07-07 | -2.32 |
+| PETR4 | 2025-07-08 | -0.91 |
+| PETR4 | 2025-07-09 | -1.52 |
+| PETR4 | 2025-07-10 | -1.77 |
+| PETR4 | 2025-07-11 | -0.58 |
+| PETR4 | 2025-07-14 | -1.89 |
+| PETR4 | 2025-07-15 | -2.65 |
+| PETR4 | 2025-07-16 | -3.14 |
+| PETR4 | 2025-07-17 | -4.11 |
+| PETR4 | 2025-07-18 | -5.58 |
+| PETR4 | 2025-07-21 | -5.39 |
+| PETR4 | 2025-07-22 | -4.48 |
+| PETR4 | 2025-07-23 | -2.53 |
+| PETR4 | 2025-07-24 | -2.68 |
 ## 05 — Queries Desafio
-### 5.1: Best and worst day for each stock
+
+Queries avançadas: melhor/pior dia, performance semanal, correlação simplificada e consistência mensal.
+
+### Query
+
+```sql
+-- =============================================================================
+-- MÓDULO 05 — Queries Desafio
+```
+
+_Sem resultados._
+### Fonte: daily_prices (dados reais)
+
+```sql
+-- =============================================================================
+```
+
+_Sem resultados._
+### ROW_NUMBER() OVER: rankeia dias por variação intraday (open → close)
+
 ```sql
 WITH ranked_days AS (
     SELECT ticker, date,
@@ -471,18 +582,18 @@ GROUP BY ticker;
 
 | ticker | best_day | best_change_pct | worst_day | worst_change_pct |
 | --- | --- | --- | --- | --- |
-| ABEV3 | 2026-05-05 00:00:00 | 7.01 | 2025-07-28 00:00:00 | -3.04 |
-| BBAS3 | 2025-08-15 00:00:00 | 8.51 | 2025-08-01 00:00:00 | -7.79 |
-| BBDC4 | 2026-01-05 00:00:00 | 4.23 | 2025-12-05 00:00:00 | -6.11 |
-| ENGI3 | 2025-08-15 00:00:00 | 7.97 | 2025-10-28 00:00:00 | -5.85 |
-| ITUB4 | 2026-01-21 00:00:00 | 3.48 | 2025-12-05 00:00:00 | -4.73 |
-| KLBN4 | 2026-02-11 00:00:00 | 5.56 | 2026-04-07 00:00:00 | -3.66 |
-| PETR4 | 2026-04-08 00:00:00 | 4.27 | 2025-06-23 00:00:00 | -3.88 |
-| RENT3 | 2026-05-20 00:00:00 | 5.11 | 2025-12-05 00:00:00 | -7.38 |
-| VALE3 | 2026-01-14 00:00:00 | 4.06 | 2026-04-29 00:00:00 | -4.06 |
-| WEGE3 | 2025-10-17 00:00:00 | 4.8 | 2025-07-24 00:00:00 | -5.16 |
+| ABEV3 | 2026-05-05 | 7.01 | 2025-07-28 | -3.04 |
+| BBAS3 | 2025-08-15 | 8.51 | 2025-08-01 | -7.79 |
+| BBDC4 | 2026-01-05 | 4.23 | 2025-12-05 | -6.11 |
+| ENGI3 | 2025-08-15 | 7.97 | 2025-10-28 | -5.85 |
+| ITUB4 | 2026-01-21 | 3.48 | 2025-12-05 | -4.73 |
+| KLBN4 | 2026-02-11 | 5.56 | 2026-04-07 | -3.66 |
+| PETR4 | 2026-04-08 | 4.27 | 2025-06-23 | -3.88 |
+| RENT3 | 2026-05-20 | 5.11 | 2025-12-05 | -7.38 |
+| VALE3 | 2026-01-14 | 4.06 | 2026-04-29 | -4.06 |
+| WEGE3 | 2025-10-17 | 4.80 | 2025-07-24 | -5.16 |
+### 5.2: Quais tickers mais valorizaram na última semana disponível na base?
 
-### 5.2: Stocks that gained the most in the last week
 ```sql
 WITH week_ago AS (
     SELECT ticker, close
@@ -505,19 +616,20 @@ ORDER BY week_change_pct DESC;
 
 | ticker | price_week_ago | current_price | week_change_pct |
 | --- | --- | --- | --- |
-| WEGE3 | 42.61 | 45.81 | 7.51 |
-| ENGI3 | 11.52 | 11.7 | 1.56 |
-| KLBN4 | 3.4 | 3.44 | 1.18 |
-| VALE3 | 79.17 | 79.94 | 0.97 |
-| BBAS3 | 19.46 | 19.53 | 0.36 |
-| ITUB4 | 40.24 | 40.13 | -0.27 |
-| RENT3 | 40.7 | 40.09 | -1.5 |
-| BBDC4 | 17.8 | 17.47 | -1.85 |
-| ABEV3 | 16.61 | 16.22 | -2.35 |
-| PETR4 | 41.18 | 38.85 | -5.66 |
+| WEGE3 | 42.83 | 45.81 | 6.96 |
+| KLBN4 | 3.41 | 3.44 | 0.88 |
+| PETR4 | 38.54 | 38.85 | 0.80 |
+| BBAS3 | 19.40 | 19.53 | 0.67 |
+| ITUB4 | 40.09 | 40.13 | 0.10 |
+| ENGI3 | 11.73 | 11.70 | -0.26 |
+| BBDC4 | 17.66 | 17.47 | -1.08 |
+| ABEV3 | 16.44 | 16.22 | -1.34 |
+| VALE3 | 81.44 | 79.94 | -1.84 |
+| RENT3 | 40.96 | 40.09 | -2.12 |
+### 5.3: Quais pares de tickers movem-se na mesma direção com mais frequência?
 
-### 5.3: Correlation between stocks (simplified — same direction days)
 ```sql
+-- Proxy simplificado de correlação (não é Pearson) — mesma direção intraday
 SELECT a.ticker AS stock_a,
        b.ticker AS stock_b,
        ROUND(SUM(CASE WHEN (a.close - a.open) * (b.close - b.open) > 0 THEN 1 ELSE 0 END) * 1.0 / COUNT(*), 4) AS same_direction_pct
@@ -528,37 +640,37 @@ HAVING COUNT(*) > 100
 ORDER BY same_direction_pct DESC;
 ```
 
-_45 linhas — exibindo top 25_
+_45 linhas — exibindo as primeiras 25_
 
 | stock_a | stock_b | same_direction_pct |
 | --- | --- | --- |
-| BBDC4 | ITUB4 | 0.759 |
-| BBDC4 | RENT3 | 0.751 |
-| BBAS3 | ITUB4 | 0.7149 |
-| BBAS3 | BBDC4 | 0.6988 |
-| ITUB4 | RENT3 | 0.6948 |
-| BBAS3 | RENT3 | 0.6225 |
-| BBDC4 | VALE3 | 0.6064 |
-| ABEV3 | BBAS3 | 0.6024 |
-| ABEV3 | BBDC4 | 0.6024 |
-| BBAS3 | VALE3 | 0.5944 |
-| BBAS3 | WEGE3 | 0.5904 |
-| BBDC4 | ENGI3 | 0.5904 |
-| BBAS3 | PETR4 | 0.5863 |
-| ITUB4 | VALE3 | 0.5863 |
-| ABEV3 | ITUB4 | 0.5823 |
-| ENGI3 | ITUB4 | 0.5823 |
-| ABEV3 | VALE3 | 0.5783 |
-| BBAS3 | KLBN4 | 0.5783 |
-| ITUB4 | WEGE3 | 0.5743 |
-| RENT3 | VALE3 | 0.5743 |
-| BBAS3 | ENGI3 | 0.5703 |
-| ENGI3 | RENT3 | 0.5703 |
-| ABEV3 | PETR4 | 0.5622 |
-| BBDC4 | WEGE3 | 0.5582 |
-| ITUB4 | PETR4 | 0.5582 |
+| BBDC4 | ITUB4 | 0.76 |
+| BBDC4 | RENT3 | 0.75 |
+| BBAS3 | ITUB4 | 0.71 |
+| BBAS3 | BBDC4 | 0.70 |
+| ITUB4 | RENT3 | 0.69 |
+| BBAS3 | RENT3 | 0.62 |
+| BBDC4 | VALE3 | 0.61 |
+| ABEV3 | BBAS3 | 0.60 |
+| ABEV3 | BBDC4 | 0.60 |
+| BBAS3 | VALE3 | 0.59 |
+| BBAS3 | WEGE3 | 0.59 |
+| BBDC4 | ENGI3 | 0.59 |
+| BBAS3 | PETR4 | 0.59 |
+| ITUB4 | VALE3 | 0.59 |
+| ABEV3 | ITUB4 | 0.58 |
+| ENGI3 | ITUB4 | 0.58 |
+| ABEV3 | VALE3 | 0.58 |
+| BBAS3 | KLBN4 | 0.58 |
+| ITUB4 | WEGE3 | 0.57 |
+| RENT3 | VALE3 | 0.57 |
+| BBAS3 | ENGI3 | 0.57 |
+| ENGI3 | RENT3 | 0.57 |
+| ABEV3 | PETR4 | 0.56 |
+| BBDC4 | WEGE3 | 0.56 |
+| ITUB4 | PETR4 | 0.56 |
+### CTE growth_check: compara média mensal com o mês anterior via LAG
 
-### 5.4: Stocks with consistent growth (higher close each month)
 ```sql
 WITH monthly_avg AS (
     SELECT ticker,
@@ -584,14 +696,13 @@ ORDER BY growth_consistency_pct DESC;
 
 | ticker | months_analysed | months_grew | growth_consistency_pct |
 | --- | --- | --- | --- |
-| VALE3 | 12 | 9 | 75.0 |
-| ABEV3 | 12 | 8 | 66.7 |
-| PETR4 | 12 | 7 | 58.3 |
-| KLBN4 | 12 | 7 | 58.3 |
-| ITUB4 | 12 | 7 | 58.3 |
-| BBDC4 | 12 | 7 | 58.3 |
-| WEGE3 | 12 | 6 | 50.0 |
-| RENT3 | 12 | 5 | 41.7 |
-| ENGI3 | 12 | 4 | 33.3 |
-| BBAS3 | 12 | 4 | 33.3 |
-
+| VALE3 | 12 | 9 | 75.00 |
+| ABEV3 | 12 | 8 | 66.70 |
+| PETR4 | 12 | 7 | 58.30 |
+| KLBN4 | 12 | 7 | 58.30 |
+| ITUB4 | 12 | 7 | 58.30 |
+| BBDC4 | 12 | 7 | 58.30 |
+| WEGE3 | 12 | 6 | 50.00 |
+| RENT3 | 12 | 5 | 41.70 |
+| ENGI3 | 12 | 4 | 33.30 |
+| BBAS3 | 12 | 4 | 33.30 |
