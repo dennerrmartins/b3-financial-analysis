@@ -1,6 +1,6 @@
 # B3 Financial Analysis — Relatório de Resultados
 
-> Gerado em **23/06/2026 12:00** · amostra de 10 tickers · SQLite · preços via Yahoo Finance
+> Gerado em **23/06/2026 12:05** · amostra de 10 tickers · SQLite · preços via Yahoo Finance
 
 > **Avisos legais e técnicos**
 > - Conteúdo **educacional**. Não é recomendação de investimento.
@@ -35,15 +35,9 @@ Validação da base, distribuição da amostra e leitura inicial de preços e vo
 ### Query
 
 ```sql
--- =============================================================================
 -- MÓDULO 01 — Exploração de Dados
-```
-
-_Sem resultados._
-### Fonte: daily_prices (Yahoo Finance) + stocks
-
-```sql
--- =============================================================================
+-- Objetivo: validar a base, entender a amostra e obter leituras iniciais
+-- Fonte: daily_prices (Yahoo Finance) + stocks
 ```
 
 _Sem resultados._
@@ -158,21 +152,17 @@ Análise de retorno, liquidez e volatilidade com dados reais de preço (Yahoo Fi
 ### Query
 
 ```sql
--- =============================================================================
 -- MÓDULO 02 — Performance e Volatilidade
+-- Objetivo: retorno, liquidez e risco relativo na amostra
+-- Fonte: daily_prices (dados reais de preço via Yahoo Finance)
 ```
 
 _Sem resultados._
-### Fonte: daily_prices (dados reais de preço via Yahoo Finance)
+### 2.1: Quais tickers tiveram maior retorno no período analisado?
 
 ```sql
--- =============================================================================
-```
-
-_Sem resultados._
-### CTE first_last: extrai preços de abertura e fechamento do período
-
-```sql
+-- CTE yearly_prices: identifica primeira e última data por ticker
+-- CTE first_last: extrai preços de abertura e fechamento do período
 WITH yearly_prices AS (
     SELECT ticker,
            MIN(date) AS first_date,
@@ -228,9 +218,11 @@ ORDER BY avg_volume DESC;
 | WEGE3 | WEG | 8725155.00 | 42.97 |
 | KLBN4 | Klabin | 3710491.00 | 3.54 |
 | ENGI3 | Energisa | 6765.00 | 12.17 |
-### CTE stats: calcula variância amostral e extrai stddev via SQRT
+### 2.3: Quais tickers apresentam maior volatilidade (desvio padrão do retorno diário)?
 
 ```sql
+-- Window function LAG: obtém o preço do dia anterior para calcular retorno %
+-- CTE stats: calcula variância amostral e extrai stddev via SQRT
 WITH daily_returns AS (
     SELECT ticker,
            (close - LAG(close) OVER (PARTITION BY ticker ORDER BY date))
@@ -273,16 +265,10 @@ ORDER BY stddev_daily_return_pct DESC;
 ### Query
 
 ```sql
--- =============================================================================
 -- MÓDULO 03 — Saúde Financeira
-```
-
-_Sem resultados._
-### Objetivo: praticar JOINs, self-joins e ratios financeiros em SQL
-
-```sql
+-- ATENÇÃO: financial_indicators contém DADOS ILUSTRATIVOS inseridos manualmente
+-- Objetivo: praticar JOINs, self-joins e ratios financeiros em SQL
 -- NÃO usar para decisão de investimento
--- =============================================================================
 ```
 
 _Sem resultados._
@@ -335,9 +321,10 @@ ORDER BY debt_to_ebitda;
 | ENGI3 | Energisa | 18.50 | 7.10 | 2.61 |
 | ITUB4 | Itaú Unibanco | 145.30 | 52.10 | 2.79 |
 | BBDC4 | Bradesco | 178.20 | 38.40 | 4.64 |
-### Self-join: cruza o mesmo ticker em anos diferentes
+### 3.3: Qual o crescimento de receita YoY (2022 → 2023)? (dados ilustrativos)
 
 ```sql
+-- Self-join: cruza o mesmo ticker em anos diferentes
 SELECT a.ticker,
        a.revenue AS revenue_2022,
        b.revenue AS revenue_2023,
@@ -382,21 +369,16 @@ Séries temporais com médias móveis, retorno diário, ranking por setor e reto
 ### Query
 
 ```sql
--- =============================================================================
 -- MÓDULO 04 — Window Functions
+-- Objetivo: análises temporais — médias móveis, retorno diário, ranking e acumulado
+-- Fonte: daily_prices (dados reais)
 ```
 
 _Sem resultados._
-### Fonte: daily_prices (dados reais)
+### 4.1: Qual a média móvel de 20 dias para PETR4?
 
 ```sql
--- =============================================================================
-```
-
-_Sem resultados._
-### AVG() OVER com frame ROWS: janela deslizante de 20 pregões
-
-```sql
+-- AVG() OVER com frame ROWS: janela deslizante de 20 pregões
 SELECT date, close,
        ROUND(AVG(close) OVER (ORDER BY date ROWS BETWEEN 19 PRECEDING AND CURRENT ROW), 2) AS ma_20
 FROM daily_prices
@@ -433,9 +415,10 @@ _249 linhas — exibindo as primeiras 25_
 | 2025-07-22 | 28.82 | 29.22 |
 | 2025-07-23 | 29.41 | 29.25 |
 | 2025-07-24 | 29.36 | 29.27 |
-### LAG() OVER PARTITION BY ticker: compara cada dia com o pregão anterior
+### 4.2: Qual o retorno diário usando LAG (preço anterior)?
 
 ```sql
+-- LAG() OVER PARTITION BY ticker: compara cada dia com o pregão anterior
 SELECT ticker, date, close,
        LAG(close) OVER (PARTITION BY ticker ORDER BY date) AS prev_close,
        ROUND((close - LAG(close) OVER (PARTITION BY ticker ORDER BY date))
@@ -474,9 +457,10 @@ _747 linhas — exibindo as primeiras 25_
 | ITUB4 | 2025-07-22 | 31.14 | 31.57 | -1.35 |
 | ITUB4 | 2025-07-23 | 31.49 | 31.14 | 1.11 |
 | ITUB4 | 2025-07-24 | 31.19 | 31.49 | -0.93 |
-### RANK() OVER PARTITION BY sector: ranking relativo por setor na amostra
+### 4.3: Como ranquear tickers por preço médio dentro de cada setor?
 
 ```sql
+-- RANK() OVER PARTITION BY sector: ranking relativo por setor na amostra
 SELECT s.sector, s.ticker,
        ROUND(AVG(p.close), 2) AS avg_price,
        RANK() OVER (PARTITION BY s.sector ORDER BY AVG(p.close) DESC) AS rank_in_sector
@@ -498,9 +482,10 @@ ORDER BY s.sector, rank_in_sector;
 | Mining | VALE3 | 68.43 | 1 |
 | Oil & Gas | PETR4 | 34.52 | 1 |
 | Paper & Packaging | KLBN4 | 3.54 | 1 |
-### FIRST_VALUE() OVER: define preço base para cálculo de retorno acumulado
+### 4.4: Qual o retorno acumulado de PETR4 desde o primeiro pregão?
 
 ```sql
+-- FIRST_VALUE() OVER: define preço base para cálculo de retorno acumulado
 WITH base_prices AS (
     SELECT ticker, date, close,
            FIRST_VALUE(close) OVER (PARTITION BY ticker ORDER BY date) AS base_price
@@ -549,21 +534,16 @@ Queries avançadas: melhor/pior dia, performance semanal, correlação simplific
 ### Query
 
 ```sql
--- =============================================================================
 -- MÓDULO 05 — Queries Desafio
+-- Objetivo: combinar CTEs, window functions e lógica condicional avançada
+-- Fonte: daily_prices (dados reais)
 ```
 
 _Sem resultados._
-### Fonte: daily_prices (dados reais)
+### 5.1: Qual foi o melhor e o pior dia de cada ticker?
 
 ```sql
--- =============================================================================
-```
-
-_Sem resultados._
-### ROW_NUMBER() OVER: rankeia dias por variação intraday (open → close)
-
-```sql
+-- ROW_NUMBER() OVER: rankeia dias por variação intraday (open → close)
 WITH ranked_days AS (
     SELECT ticker, date,
            ROUND((close - open) / open * 100, 2) AS daily_change_pct,
@@ -669,9 +649,10 @@ _45 linhas — exibindo as primeiras 25_
 | ABEV3 | PETR4 | 0.56 |
 | BBDC4 | WEGE3 | 0.56 |
 | ITUB4 | PETR4 | 0.56 |
-### CTE growth_check: compara média mensal com o mês anterior via LAG
+### 5.4: Quais tickers têm maior consistência de alta mês a mês?
 
 ```sql
+-- CTE growth_check: compara média mensal com o mês anterior via LAG
 WITH monthly_avg AS (
     SELECT ticker,
            STRFTIME('%Y-%m', date) AS month,

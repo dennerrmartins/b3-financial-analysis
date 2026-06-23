@@ -1,5 +1,6 @@
 """Executa todas as queries SQL e gera output/RESULTS.md com resultados e interpretações."""
 
+import re
 import sqlite3
 from datetime import datetime
 from pathlib import Path
@@ -55,6 +56,9 @@ INTERPRETATIONS = {
 }
 
 
+QUERY_TITLE = re.compile(r"^--\s*\d+\.\d+:")
+
+
 def parse_queries(content: str) -> list[tuple[str, str]]:
     blocks: list[tuple[str, str]] = []
     current_title = "Query"
@@ -62,12 +66,12 @@ def parse_queries(content: str) -> list[tuple[str, str]]:
 
     for line in content.splitlines():
         stripped = line.strip()
-        if stripped.startswith("--") and ":" in stripped[2:]:
+        if QUERY_TITLE.match(stripped):
             if current_lines:
                 blocks.append((current_title, "\n".join(current_lines).strip()))
                 current_lines = []
             current_title = stripped.lstrip("- ").strip()
-        elif stripped:
+        elif stripped and not stripped.startswith("-- =="):
             current_lines.append(line)
 
     if current_lines:
