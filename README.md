@@ -5,11 +5,15 @@
 [![Portfolio](https://img.shields.io/badge/Portfolio-Dados%20%26%20Finanças-2563eb?style=flat)](https://github.com/dennerrmartins)
 [![Status](https://img.shields.io/badge/Status-Ativo-22c55e?style=flat)](#)
 
-**Análise SQL de uma amostra de tickers da B3 com dados reais de preço, ETL em Python e relatórios reprodutíveis.**
+**Pipeline reprodutível de análise financeira com SQL:** Yahoo Finance → SQLite → 20+ queries → relatório documentado.
 
-Portfólio profissional de **Denner Martins** — Dados, BI e Mercado Financeiro.
+Projeto **secundário** de portfólio (prova técnica SQL + Python). Projeto principal: [Finance Ops + NF Agent](https://github.com/dennerrmartins/finance-ops-automation).
+
+Portfólio de **Denner Martins** — Analista de Dados/BI · Finanças.
 
 > **Aviso:** conteúdo educacional. **Não é recomendação de investimento.** Amostra de 10 tickers — não representa a B3 como um todo.
+
+**English summary:** Reproducible financial analysis pipeline: real B3 price data via Yahoo Finance, SQLite modeling, 20+ SQL queries (JOINs, CTEs, window functions), and documented results. Educational portfolio piece — not investment advice.
 
 ---
 
